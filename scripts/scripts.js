@@ -12,6 +12,16 @@ import {
   buildBlock,
 } from './aem.js';
 
+/**
+ * Returns the page language from the first path segment.
+ * Any language code works (`de`, `fr`, `pt-br`); no list to maintain.
+ * @returns {string} The language code, or `en` when the path has none
+ */
+export function getLanguage() {
+  const [, segment] = window.location.pathname.split('/');
+  return /^[a-z]{2}(-[a-z]{2})?$/.test(segment) ? segment : 'en';
+}
+
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerTT = window.trustedTypes.createPolicy('tt-inner', {
     createHTML: (s) => s, // avoid stack overflow
@@ -160,7 +170,7 @@ export function decorateMain(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  document.documentElement.lang = 'en';
+  document.documentElement.lang = getLanguage();
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
   if (main) {
